@@ -11,9 +11,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.prog4.appcocinero.ui.screens.ComandaDetailScreen
 import com.prog4.appcocinero.ui.screens.ComandasScreen
+import com.prog4.appcocinero.ui.screens.InsumosScreen
 import com.prog4.appcocinero.ui.theme.AppCocineroTheme
 import com.prog4.appcocinero.ui.screens.LoginScreen
+import com.prog4.appcocinero.ui.screens.PerfilScreen
+import com.prog4.appcocinero.ui.screens.ProduccionScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -22,14 +26,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppCocineroTheme {
-                /*Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )
-                }*/
-                ComandasScreen()
-                //LoginScreen()
+                    /*ComandasScreen()
+                    PerfilScreen()
+                    InsumosScreen()
+                    LoginScreen()
+                    ProduccionScreen()*/
+                    ComandaDetailScreen()
+                }
+
             }
         }
     }

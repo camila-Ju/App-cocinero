@@ -1,18 +1,20 @@
 package com.prog4.appcocinero.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
-// 1. Modelo de datos sencillo para representar una Comanda
 data class Comanda(
     val id: Int,
     val mesa: String,
@@ -20,11 +22,90 @@ data class Comanda(
     val estado: String // Ej: "Pendiente", "Preparando", "Listo"
 )
 
+@Composable
+fun TarjetaComanda(comanda: Comanda, onCambiarEstado: (String) -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Título de la mesa
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+
+            ) {
+                Text(
+                    text = comanda.mesa,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(
+                        onClick = { }
+                    ) {
+                        Text(text = "Detalle")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Listado de platos del pedido
+            Text(
+                text = "Platos:",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            comanda.platos.forEach { plato ->
+                Text(
+                    text = "• $plato",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Estado: ${comanda.estado}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = when (comanda.estado) {
+                        "Listo" -> MaterialTheme.colorScheme.primary
+                        "Preparando" -> MaterialTheme.colorScheme.tertiary
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(
+                        onClick = { onCambiarEstado("Preparando") }
+                    ) {
+                        Text(text = "Preparar")
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
 fun ComandasScreen() {
-    // 2. Datos harcodeados simulando lo que vería el cocinero (inspirado en tus mockups)
     var listaComandas by remember {
         mutableStateOf(
             listOf(
@@ -35,118 +116,64 @@ fun ComandasScreen() {
         )
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("RestoCo - Panel de Cocina") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            )
-        }
-    ) { paddingValues ->
-        // 3. LazyColumn funciona igual que un RecyclerView optimizado para listas largas
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item {
-                Text(
-                    text = "Comandas Activas",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontSize = 20.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-            }
-
-            items(listaComandas) { comanda ->
-                TarjetaComanda(
-                    comanda = comanda,
-                    onCambiarEstado = { nuevoEstado ->
-                        // Actualizamos el estado de la comanda seleccionada
-                        listaComandas = listaComandas.map {
-                            if (it.id == comanda.id) it.copy(estado = nuevoEstado) else it
-                        }
-                    }
-                )
-            }
-        }
-    }
-}
-
-// 4. Componente visual (Composable) para cada tarjeta de pedido
-@Composable
-fun TarjetaComanda(comanda: Comanda, onCambiarEstado: (String) -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            // Título de la mesa
-            Text(
-                text = comanda.mesa,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Listado de platos del pedido
-            Text(text = "Platos:", style = MaterialTheme.typography.bodyMedium)
-            comanda.platos.forEach { plato ->
-                Text(text = "• $plato", style = MaterialTheme.typography.bodyLarge)
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Estado actual y botones interactivos
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Estado: ${comanda.estado}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = when(comanda.estado) {
-                        "Listo" -> Color(0xFF2E7D32) // Verde
-                        "Preparando" -> Color(0xFFEF6C00) // Naranja
-                        else -> Color.Gray
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Restooo. Cocina") },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    actions = {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Ícono de usuario",
+                                modifier = Modifier.size(24.dp),
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
                     }
                 )
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item {
+                    Text(
+                        text = "Comandas",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(
-                        onClick = { onCambiarEstado("Preparando") },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)
-                    ) {
-                        Text(
-                            text ="Preparar",
-                            color =Color.Black
-                        )
-                    }
-                    /*Button(
-                        onClick = { onCambiarEstado("Listo") },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF66BB6A))
-                    ) {
-                        Text("Listo")
-                    }*/
+                items(listaComandas) { comanda ->
+                    TarjetaComanda(
+                        comanda = comanda,
+                        onCambiarEstado = { nuevoEstado ->
+                            listaComandas = listaComandas.map {
+                                if (it.id == comanda.id) it.copy(estado = nuevoEstado) else it
+                            }
+                        }
+                    )
                 }
             }
         }
     }
-}
-
-@Composable
-fun RestoCoTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        content = content
-    )
 }

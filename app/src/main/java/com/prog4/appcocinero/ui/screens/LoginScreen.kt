@@ -12,9 +12,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-
-
 
 @Composable
 @Preview(showBackground = true)
@@ -40,7 +37,6 @@ fun LoginScreen() {
         ) {
             Text(
                 text = "Restooo.",
-                fontSize = 32.sp,
                 style = MaterialTheme.typography.headlineLarge
             )
 
@@ -48,12 +44,11 @@ fun LoginScreen() {
 
             Text(
                 text = "Tu cocina te espera.",
-                fontSize = 24.sp,
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
                 text = "Ingresá para comenzar tu turno.",
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
@@ -93,7 +88,10 @@ fun LoginScreen() {
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text(text = "Entrar a cocina", fontSize = 16.sp)
+                Text(
+                    text = "Entrar a cocina",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
     }
