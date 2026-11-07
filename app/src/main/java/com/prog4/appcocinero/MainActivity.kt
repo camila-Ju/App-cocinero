@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.prog4.appcocinero.ui.navigation.AppNavigation
 import com.prog4.appcocinero.ui.screens.ComandaDetailScreen
 import com.prog4.appcocinero.ui.screens.ComandasScreen
 import com.prog4.appcocinero.ui.screens.InsumosScreen
@@ -35,14 +36,16 @@ class MainActivity : ComponentActivity() {
                     PerfilScreen()
                     InsumosScreen()
                     LoginScreen()
-                    ProduccionScreen()*/
-                    ComandaDetailScreen()
+                    ProduccionScreen()
+                    ComandaDetailScreen()*/
+                    AppNavigation()
                 }
 
             }
         }
     }
 }
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -51,11 +54,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     AppCocineroTheme {
         Greeting("Android")
     }
-}
+}*/

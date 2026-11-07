@@ -22,14 +22,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.prog4.appcocinero.data.TareaProduccion
 
-data class TareaProduccion(
-    val id: Int,
-    val titulo: String,
-    val categoria: String,
-    val detalle: String,
-    var completada: Boolean
-)
 
 val listaTareasIniciales = listOf(
     TareaProduccion(1, "Hornear pan de hamburguesa", "Panadería", "24 unidades", true),

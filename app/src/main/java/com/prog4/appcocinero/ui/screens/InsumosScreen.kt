@@ -16,13 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.prog4.appcocinero.data.Insumo
 
-data class Insumo(
-    val id: Int,
-    val nombre: String,
-    val categoria: String,
-    var disponible: Boolean
-)
 
 val listaInsumosIniciales = listOf(
     Insumo(1, "Carne para hamburguesa", "Carnes", true),

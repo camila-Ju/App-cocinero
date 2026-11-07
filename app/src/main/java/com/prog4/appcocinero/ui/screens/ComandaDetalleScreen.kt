@@ -16,16 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-data class PlatoComanda(
-    val id: Int,
-    val numeroPlato: String,
-    val nombre: String,
-    val unidades: Int,
-    val alertaAlergia: String? = null,
-    val ingredientes: List<String>,
-    val platoAdicional: String? = null,
-    var listo: Boolean = false
-)
+import com.prog4.appcocinero.data.PlatoComanda
 
 val comandaMesa12 = listOf(
     PlatoComanda(
@@ -34,31 +25,37 @@ val comandaMesa12 = listOf(
         nombre = "Salmón a la plancha",
         unidades = 2,
         alertaAlergia = "ALERGIA: FRUTOS SECOS. Sin frutos secos. Usar utensilios limpios y evitar la contaminación cruzada.",
-        ingredientes = listOf("Filete de salmón", "Zucchini y zanahoria asados", "Limón y perejil fresco", "Aceite de oliva, sal y pimienta"),
+        ingredientes = listOf(
+            "Filete de salmón",
+            "Zucchini y zanahoria asados",
+            "Limón y perejil fresco",
+            "Aceite de oliva, sal y pimienta"
+        ),
         platoAdicional = "1 × Ensalada de la casa",
         listo = false
-    ),
-    PlatoComanda(
+    ), PlatoComanda(
         id = 2,
         numeroPlato = "PLATO 2 DE 2",
         nombre = "Pizza",
         unidades = 2,
         alertaAlergia = null,
-        ingredientes = listOf("Masa madre", "Salsa de tomate natural", "Queso mozzarella", "Albahaca fresca"),
+        ingredientes = listOf(
+            "Masa madre", "Salsa de tomate natural", "Queso mozzarella", "Albahaca fresca"
+        ),
         platoAdicional = "1 × Ensalada de la casa",
         listo = false
     )
 )
 
 @Composable
-@Preview(showBackground = true)
-fun ComandaDetailScreen() {
+fun ComandaDetailScreen(
+    comandaId: Int, onBack: () -> Unit
+) {
     var platos by remember { mutableStateOf(comandaMesa12) }
     val scrollState = rememberScrollState()
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
@@ -66,43 +63,74 @@ fun ComandaDetailScreen() {
                 .padding(16.dp)
                 .verticalScroll(scrollState)
         ) {
+            // Cabecera superior: Botón Volver y Título
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Volver",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Comandas", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                    Text(
+                        text = "Comandas",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
                 }
-                Text(text = "Restooo.", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "Restooo.",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Información de la Mesa y Cronómetro
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
                 Column {
-                    Text(text = "Mesa #12", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "Mesa #12",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
                     Spacer(modifier = Modifier.height(2.dp))
-                    Text(text = "Detalle del pedido · Comanda 041", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = "Detalle del pedido · Comanda $comandaId",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 Column(horizontalAlignment = Alignment.End) {
-                    Text(text = "TRANSCURRIDO", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(text = "23:18", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.error)
+                    Text(
+                        text = "TRANSCURRIDO",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "23:18",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Estado del pedido
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
@@ -111,15 +139,20 @@ fun ComandaDetailScreen() {
                         .background(MaterialTheme.colorScheme.primary)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Estado: En preparación", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.primary)
+                Text(
+                    text = "Estado: En preparación",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Listado de platos
             platos.forEach { plato ->
                 PlatoCardEstiloOriginal(
-                    plato = plato,
-                    onMarcarListo = {
+                    plato = plato, onMarcarListo = {
                         platos = platos.map {
                             if (it.id == plato.id) it.copy(listo = !it.listo) else it
                         }
@@ -146,9 +179,18 @@ fun PlatoCardEstiloOriginal(plato: PlatoComanda, onMarcarListo: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = plato.numeroPlato, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = plato.numeroPlato,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Spacer(modifier = Modifier.height(2.dp))
-                    Text(text = plato.nombre, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = plato.nombre,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -173,7 +215,11 @@ fun PlatoCardEstiloOriginal(plato: PlatoComanda, onMarcarListo: () -> Unit) {
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "Foto", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = "Foto",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 
@@ -185,8 +231,7 @@ fun PlatoCardEstiloOriginal(plato: PlatoComanda, onMarcarListo: () -> Unit) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.Top
+                        modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.Top
                     ) {
                         Icon(
                             imageVector = Icons.Default.Warning,
@@ -207,13 +252,29 @@ fun PlatoCardEstiloOriginal(plato: PlatoComanda, onMarcarListo: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Ingredientes", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = "Ingredientes",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodyMedium
+            )
             Spacer(modifier = Modifier.height(6.dp))
             plato.ingredientes.forEach { ingrediente ->
-                Row(modifier = Modifier.padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Box(modifier = Modifier.size(4.dp).clip(RoundedCornerShape(2.dp)).background(MaterialTheme.colorScheme.onSurfaceVariant))
+                Row(
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(MaterialTheme.colorScheme.onSurfaceVariant)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = ingrediente, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = ingrediente,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 
@@ -237,4 +298,12 @@ fun PlatoCardEstiloOriginal(plato: PlatoComanda, onMarcarListo: () -> Unit) {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ComandaDetalleScreenPreview() {
+    ComandaDetailScreen(
+        1, onBack = { }
+    )
 }

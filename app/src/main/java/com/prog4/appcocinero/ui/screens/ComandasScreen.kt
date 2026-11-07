@@ -14,16 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
-data class Comanda(
-    val id: Int,
-    val mesa: String,
-    val platos: List<String>,
-    val estado: String // Ej: "Pendiente", "Preparando", "Listo"
-)
+import com.prog4.appcocinero.data.Comanda
 
 @Composable
-fun TarjetaComanda(comanda: Comanda, onCambiarEstado: (String) -> Unit) {
+fun TarjetaComanda(
+    comanda: Comanda,
+    onCambiarEstado: (String) -> Unit,
+    onDetalleClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -36,7 +33,8 @@ fun TarjetaComanda(comanda: Comanda, onCambiarEstado: (String) -> Unit) {
         ) {
             // Título de la mesa
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -50,7 +48,7 @@ fun TarjetaComanda(comanda: Comanda, onCambiarEstado: (String) -> Unit) {
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(
-                        onClick = { }
+                        onClick = onDetalleClick
                     ) {
                         Text(text = "Detalle")
                     }
@@ -104,8 +102,9 @@ fun TarjetaComanda(comanda: Comanda, onCambiarEstado: (String) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview(showBackground = true)
-fun ComandasScreen() {
+fun ComandasScreen(
+    onComandaClick: (Int) -> Unit
+) {
     var listaComandas by remember {
         mutableStateOf(
             listOf(
@@ -170,10 +169,20 @@ fun ComandasScreen() {
                             listaComandas = listaComandas.map {
                                 if (it.id == comanda.id) it.copy(estado = nuevoEstado) else it
                             }
-                        }
+                        },
+                        onDetalleClick = {
+                            onComandaClick(comanda.id)
+                        },
                     )
                 }
             }
         }
     }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun ComandaScreenPreview() {
+    ComandasScreen({ })
 }

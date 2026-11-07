@@ -14,8 +14,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-@Preview(showBackground = true)
-fun LoginScreen() {
+fun LoginScreen(
+    onLoginSuccess: () -> Unit //se invoca este callback cuando la validación sea correcta
+    ) {
     val context = LocalContext.current
 
     var usuario by remember { mutableStateOf("") }
@@ -80,6 +81,7 @@ fun LoginScreen() {
                 onClick = {
                     if (usuario == usuarioCorrecto && password == passwordCorrecta) {
                         Toast.makeText(context, "¡Bienvenido a la cocina!", Toast.LENGTH_SHORT).show()
+                        onLoginSuccess()
                     } else {
                         Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
                     }
@@ -95,4 +97,10 @@ fun LoginScreen() {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(onLoginSuccess = {})
 }
