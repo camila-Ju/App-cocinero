@@ -15,6 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.prog4.appcocinero.data.Comanda
+import com.prog4.appcocinero.ui.viewmodel.ComandasViewModel
+import com.prog4.appcocinero.ui.viewmodel.PerfilViewModel
 
 @Composable
 fun TarjetaComanda(
@@ -103,9 +105,10 @@ fun TarjetaComanda(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComandasScreen(
+    viewModel: ComandasViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), // <-- Inyectamos el ViewModel aquí
     onComandaClick: (Int) -> Unit
 ) {
-    var listaComandas by remember {
+    /*var listaComandas by remember {
         mutableStateOf(
             listOf(
                 Comanda(1, "Mesa N° 1", listOf("1x Lomito", "1x Pizza"), "Pendiente"),
@@ -113,7 +116,7 @@ fun ComandasScreen(
                 Comanda(3, "Mesa N° 3", listOf("2x Milanesas con puré"), "Pendiente")
             )
         )
-    }
+    }*/
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -162,7 +165,7 @@ fun ComandasScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                 }
 
-                items(listaComandas) { comanda ->
+                /*items(listaComandas) { comanda ->
                     TarjetaComanda(
                         comanda = comanda,
                         onCambiarEstado = { nuevoEstado ->
@@ -174,15 +177,28 @@ fun ComandasScreen(
                             onComandaClick(comanda.id)
                         },
                     )
+                }*/
+                items(viewModel.listaComandas) { comanda ->
+                    TarjetaComanda(
+                        comanda = comanda,
+                        onCambiarEstado = { nuevoEstado ->
+                            // Delegamos el cambio de estado al ViewModel
+                            viewModel.cambiarEstadoComanda(comanda.id, nuevoEstado)
+                        },
+                        onDetalleClick = {
+                            onComandaClick(comanda.id)
+                        },
+                    )
                 }
             }
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun ComandaScreenPreview() {
-    ComandasScreen({ })
+    ComandasScreen(
+        onComandaClick = {}
+    )
 }

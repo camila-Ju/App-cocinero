@@ -16,26 +16,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.prog4.appcocinero.data.Insumo
-
-
-val listaInsumosIniciales = listOf(
-    Insumo(1, "Carne para hamburguesa", "Carnes", true),
-    Insumo(2, "Milanesa de ternera", "Carnes", true),
-    Insumo(3, "Salmón", "Pescados", true),
-    Insumo(4, "Merluza", "Pescados", false),
-    Insumo(5, "Papas", "Vegetales", true),
-    Insumo(6, "Hongos", "Vegetales", false),
-    Insumo(7, "Queso parmesano", "Lácteos", true)
-)
+import com.prog4.appcocinero.ui.viewmodel.InsumosViewModel // <-- Importamos el ViewModel
 
 @Composable
-@Preview(showBackground = true)
-fun InsumosScreen() {
-    var insumos by remember { mutableStateOf(listaInsumosIniciales) }
-
-    val disponiblesCount = insumos.count { it.disponible }
-    val agotadosCount = insumos.count { !it.disponible }
+fun InsumosScreen(
+    viewModel: InsumosViewModel = viewModel() // <-- 1. Inyectamos el ViewModel correctamente en los parámetros
+) {
+    val disponiblesCount = viewModel.disponiblesCount
+    val agotadosCount = viewModel.agotadosCount
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -103,7 +93,8 @@ fun InsumosScreen() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            val insumosPorCategoria = insumos.groupBy { it.categoria }
+            // 2. Usamos los insumos que vienen directos del ViewModel
+            val insumosPorCategoria = viewModel.insumos.groupBy { it.categoria }
 
             LazyColumn(
                 modifier = Modifier.weight(1f),
@@ -131,9 +122,8 @@ fun InsumosScreen() {
                         InsumoItemCard(
                             insumo = insumo,
                             onCheckedChange = { nuevoEstado ->
-                                insumos = insumos.map {
-                                    if (it.id == insumo.id) it.copy(disponible = nuevoEstado) else it
-                                }
+                                // 3. Delegamos el cambio al ViewModel
+                                viewModel.cambiarDisponibilidad(insumo.id, nuevoEstado)
                             }
                         )
                     }
@@ -197,4 +187,10 @@ fun InsumoItemCard(insumo: Insumo, onCheckedChange: (Boolean) -> Unit) {
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun InsumosScreenPreview() {
+    InsumosScreen()
 }

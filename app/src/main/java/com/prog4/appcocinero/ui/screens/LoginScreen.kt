@@ -12,18 +12,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.prog4.appcocinero.ui.viewmodel.LoginViewModel
 
 @Composable
 fun LoginScreen(
+    viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     onLoginSuccess: () -> Unit //se invoca este callback cuando la validación sea correcta
     ) {
     val context = LocalContext.current
-
-    var usuario by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    val usuarioCorrecto = "lucia.martinez"
-    val passwordCorrecta = "1234"
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -54,20 +50,26 @@ fun LoginScreen(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-
+            // aqui cambie
             OutlinedTextField(
-                value = usuario,
-                onValueChange = { usuario = it },
+                value = viewModel.usuario,
+                onValueChange = { viewModel.onUsuarioChanged(it) },
                 label = { Text("Usuario") },
+                /*value = usuario,
+                onValueChange = { usuario = it },
+                label = { Text("Usuario") },*/
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
+            //aqui cambie
             OutlinedTextField(
-                value = password,
+               /* value = password,
                 onValueChange = { password = it },
+                label = { Text("Contraseña") },*/
+                value = viewModel.password,
+                onValueChange = { viewModel.onPasswordChanged(it) },
                 label = { Text("Contraseña") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -79,12 +81,19 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    if (usuario == usuarioCorrecto && password == passwordCorrecta) {
+                   /* if (usuario == usuarioCorrecto && password == passwordCorrecta) {
                         Toast.makeText(context, "¡Bienvenido a la cocina!", Toast.LENGTH_SHORT).show()
                         onLoginSuccess()
                     } else {
                         Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
-                    }
+                    }*/
+                    //aqui cambie
+                    viewModel.validarLogin(
+                        onSuccess = {
+                            Toast.makeText(context, "¡Bienvenido a la cocina!", Toast.LENGTH_SHORT).show()
+                            onLoginSuccess()
+                        }
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,6 +103,11 @@ fun LoginScreen(
                     text = "Entrar a cocina",
                     style = MaterialTheme.typography.bodyLarge
                 )
+            }
+            //aqui cambie
+            viewModel.errorMensaje?.let { error ->
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = error, color = MaterialTheme.colorScheme.error)
             }
         }
     }

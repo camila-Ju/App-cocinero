@@ -16,26 +16,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.prog4.appcocinero.ui.screens.*
 
+
 @Immutable
 //se definen las claves simples e inmutables para el acceso a las pantallas
 sealed interface ScreenKey {
     data object Perfil : ScreenKey
+
     data object Insumo : ScreenKey
+
     data object Login : ScreenKey
+
     data object Produccion : ScreenKey
+
     data object Comanda : ScreenKey
+
     data class ComandaDetail(val comandaId: Int) : ScreenKey
+
 }
 
 @Composable
 fun AppNavigation() {
     // 2. Creación de la pila de navegación observable con la pantalla inicial (Login)
     val backStack = remember { mutableStateListOf<Any>(ScreenKey.Login) }
+
 
     // Obtener la clave de la pantalla activa en la cima de la pila
     val currentKey = backStack.lastOrNull()

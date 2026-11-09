@@ -20,15 +20,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.prog4.appcocinero.ui.viewmodel.PerfilViewModel
 
 @Composable
 fun PerfilScreen(
+    viewModel: PerfilViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     onCerrarSesion: () -> Unit
 ) {
     val context = LocalContext.current
 
-    var nombreUsuario by remember { mutableStateOf("Lucía Martínez") }
-    var turnoSeleccionado by remember { mutableStateOf("Noche · 18:00–02:00") }
+   /* var nombreUsuario by remember { mutableStateOf("Lucía Martínez") }
+    var turnoSeleccionado by remember { mutableStateOf("Noche · 18:00–02:00") }*/
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -130,8 +132,10 @@ fun PerfilScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
-                value = nombreUsuario,
-                onValueChange = { nombreUsuario = it },
+               /* value = nombreUsuario,
+                onValueChange = { nombreUsuario = it },*/
+                value = viewModel.nombreUsuario, // <-- Usamos la variable del ViewModel
+                onValueChange = { viewModel.onNombreChanged(it) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -154,8 +158,10 @@ fun PerfilScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
             OutlinedTextField(
-                value = turnoSeleccionado,
-                onValueChange = { turnoSeleccionado = it },
+                /*value = turnoSeleccionado,
+                onValueChange = { turnoSeleccionado = it },*/
+                value = viewModel.turnoSeleccionado, // <-- Usamos la variable del ViewModel
+                onValueChange = { viewModel.guardarCambios { (it) } },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -173,7 +179,10 @@ fun PerfilScreen(
 
             Button(
                 onClick = {
-                    Toast.makeText(context, "Cambios guardados correctamente", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(context, "Cambios guardados correctamente", Toast.LENGTH_SHORT).show()
+                    viewModel.guardarCambios {
+                        Toast.makeText(context, "Cambios guardados correctamente", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier

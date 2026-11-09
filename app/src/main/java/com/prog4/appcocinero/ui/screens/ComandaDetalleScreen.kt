@@ -17,41 +17,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.prog4.appcocinero.data.PlatoComanda
-
-val comandaMesa12 = listOf(
-    PlatoComanda(
-        id = 1,
-        numeroPlato = "PLATO 1 DE 2",
-        nombre = "Salmón a la plancha",
-        unidades = 2,
-        alertaAlergia = "ALERGIA: FRUTOS SECOS. Sin frutos secos. Usar utensilios limpios y evitar la contaminación cruzada.",
-        ingredientes = listOf(
-            "Filete de salmón",
-            "Zucchini y zanahoria asados",
-            "Limón y perejil fresco",
-            "Aceite de oliva, sal y pimienta"
-        ),
-        platoAdicional = "1 × Ensalada de la casa",
-        listo = false
-    ), PlatoComanda(
-        id = 2,
-        numeroPlato = "PLATO 2 DE 2",
-        nombre = "Pizza",
-        unidades = 2,
-        alertaAlergia = null,
-        ingredientes = listOf(
-            "Masa madre", "Salsa de tomate natural", "Queso mozzarella", "Albahaca fresca"
-        ),
-        platoAdicional = "1 × Ensalada de la casa",
-        listo = false
-    )
-)
+import com.prog4.appcocinero.ui.viewmodel.ComandaDetailViewModel
 
 @Composable
 fun ComandaDetailScreen(
-    comandaId: Int, onBack: () -> Unit
+    comandaId: Int,
+    viewModel: ComandaDetailViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), // <-- Inyectamos el ViewModel aquí
+    onBack: () -> Unit
 ) {
-    var platos by remember { mutableStateOf(comandaMesa12) }
+    //var platos by remember { mutableStateOf(comandaMesa12) }
     val scrollState = rememberScrollState()
 
     Surface(
@@ -150,12 +124,22 @@ fun ComandaDetailScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Listado de platos
-            platos.forEach { plato ->
+           /* platos.forEach { plato ->
                 PlatoCardEstiloOriginal(
                     plato = plato, onMarcarListo = {
                         platos = platos.map {
                             if (it.id == plato.id) it.copy(listo = !it.listo) else it
                         }
+                    }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }**/
+            viewModel.platos.forEach { plato ->
+                PlatoCardEstiloOriginal(
+                    plato = plato,
+                    onMarcarListo = {
+                        // Delegamos el cambio de estado del plato al ViewModel
+                        viewModel.togglePlatoListo(plato.id)
                     }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -165,7 +149,9 @@ fun ComandaDetailScreen(
 }
 
 @Composable
-fun PlatoCardEstiloOriginal(plato: PlatoComanda, onMarcarListo: () -> Unit) {
+fun PlatoCardEstiloOriginal(
+    plato: PlatoComanda,
+    onMarcarListo: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),

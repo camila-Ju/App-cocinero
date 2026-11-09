@@ -23,27 +23,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.prog4.appcocinero.data.TareaProduccion
+import com.prog4.appcocinero.ui.viewmodel.ProduccionViewModel
 
-
-val listaTareasIniciales = listOf(
-    TareaProduccion(1, "Hornear pan de hamburguesa", "Panadería", "24 unidades", true),
-    TareaProduccion(2, "Porcionar pan de mesa", "Panadería", "20 porciones", true),
-    TareaProduccion(3, "Lavar hojas de ensalada", "Vegetales", "2 kg", true),
-    TareaProduccion(4, "Cortar papas rústicas", "Vegetales", "5 kg", false),
-    TareaProduccion(5, "Preparar vegetales asados", "Vegetales", "3 kg", false),
-    TareaProduccion(6, "Porcionar salmón", "Proteínas", "12 porciones de 200 g", true),
-    TareaProduccion(7, "Armar hamburguesas", "Proteínas", "24 unidades de 180 g", false)
-)
 
 @Composable
 @Preview(showBackground = true)
-fun ProduccionScreen() {
-    var tareas by remember { mutableStateOf(listaTareasIniciales) }
+fun ProduccionScreen(
+    viewModel: ProduccionViewModel = androidx.lifecycle.viewmodel.compose.viewModel() // <-- Inyectamos el ViewModel aquí
+) {
 
-    val totalTareas = tareas.size
-    val completadasCount = tareas.count { it.completada }
+    // Ya no usamos la lista fija ni el remember local, usamos las propiedades del ViewModel
+    val tareas = viewModel.tareas
+    val totalTareas = viewModel.totalTareas
+    val completadasCount = viewModel.completadasCount
     val pendientesCount = totalTareas - completadasCount
-    val porcentajeProgreso = if (totalTareas > 0) (completadasCount.toFloat() / totalTareas) else 0f
+    val porcentajeProgreso = viewModel.porcentajeProgreso
     val porcentajeInt = (porcentajeProgreso * 100).toInt()
 
     Surface(
@@ -184,9 +178,10 @@ fun ProduccionScreen() {
                         TareaItemCard(
                             tarea = tarea,
                             onToggle = {
-                                tareas = tareas.map {
+                                /*tareas = tareas.map {
                                     if (it.id == tarea.id) it.copy(completada = !it.completada) else it
-                                }
+                                }*/
+                                viewModel.toggleTareaCompletada(tarea.id)
                             }
                         )
                     }
@@ -255,4 +250,10 @@ fun TareaItemCard(tarea: TareaProduccion, onToggle: () -> Unit) {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProduccionScreenPreview() {
+    ProduccionScreen()
 }
